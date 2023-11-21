@@ -52,3 +52,5 @@ Para a gestão do domínio de usuário, adotamos a abordagem CQRS, que se traduz
 Essa separação possibilita a otimização de cada caminho de acordo com suas funções específicas, resultando em benefícios tangíveis como melhorias na escalabilidade e desempenho. Com o CQRS, podemos modelar os comandos e as consultas de maneira independente, ajustando cada um conforme necessário para atender aos requisitos particulares de cada operação.
 
 Interessante notar que para a visão de aplicação do usuário, existe apenas um ponto focal dos recursos, a interface visual que ele está usando, mas na visão API interface de computador, quando o usuário solicita leitura usa user.query.api e quando ele solicita registrar algo, usa user.cmd.api controller updtate.
+
+![](Master%20Spring%20Boot%20Microservices%20with%20CQRS%20&%20Event%20Sourcing.svg)
