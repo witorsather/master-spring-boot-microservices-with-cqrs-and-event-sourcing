@@ -57,5 +57,33 @@ Essa separação possibilita a otimização de cada caminho de acordo com suas f
 
 Interessante notar que para a visão de aplicação do usuário, existe apenas um ponto focal dos recursos, a interface visual que ele está usando, mas na visão API interface de computador, quando o usuário solicita leitura usa user.query.api e quando ele solicita registrar algo, usa user.cmd.api controller updtate.
 
-## Comandos do **user.cmd.api** e **Eventos do user.core** (Biblioteca de Classes)
-- Todo comando resulta em um evento, os eventos ficam no user.core e são criados através do user.cmd.api pacote commands e pelos 3 comandos, Register, Update e Remove, portanto comandos do user.cmd.api e eventos do user.core estão fortemente relacionados. Vale notar que a user.query.api não produz nenhum comando, portanto não produz nenhum evento, ela apenas consome eventos e dados do banco de leitura.
+## Comandos do **user.cmd.api** e Eventos do **user.core** (Biblioteca de Classes)
+- Todo comando resulta em um evento, os eventos ficam no user.core e são criados através do user.cmd.api pacote commands e pelos 3 comandos, Register, Update e Remove, portanto comandos do user.cmd.api e eventos do user.core estão fortemente relacionados, na verdade eles possuem a mesma aparência, a única diferença é que nos comandos tem a anotação do Axon @TargetAggregateIdentifier. Vale notar que a user.query.api não produz nenhum comando, portanto não produz nenhum evento, ela apenas consome eventos e dados do banco de leitura.
+
+## user.cmd.api
+### UserAggregate
+Interessante notar que nessa classe temos 2 tipos de manipuladores, manipuladores de comandos e manipuladores de eventos, ou seja, o agregado é responsável por receber comandos transforma-los em eventos e logo em seguida outra método seu manipular esse evento transformado pelo manipulador de comando pra evento.
+
+Reponsável por receber um comando dos tipos Register, Updtate e Remove user e retornar um evento. Todos os manipuladores de fornercimento de eventos combinados formam o agregado.
+
+Principal método do UserAggregate que é um construtor da classe que recebe um comando, processa esse comando, criando um novo usuário em memória com a senha em hash e cria um novo evento baseado nos dados do comando, interessante notar como o AggregateLifecycle.apply pega esse evento e *salva ele no banco de dados MongoDB e publica no Ônibus de Eventos* (mensageria) onde a user.query.api irá consumir posteriormente.
+
+``` java
+    @CommandHandler
+    public UserAggregate(RegisterUserCommand command) {
+        var newUser = command.getUser();
+        newUser.setId(command.getId());
+        var password = newUser.getAccount().getPassword();
+        passwordEncoder = new PasswordEncoderImpl();
+        var hashPassword = passwordEncoder.hashPassword(password);
+        newUser.getAccount().setPassword(hashPassword);
+
+        var event = new UserRegisteredEvent().builder()
+                .id(command.getId())
+                .user(newUser)
+                .build();
+
+        AggregateLifecycle.apply(event);
+    }
+```
+

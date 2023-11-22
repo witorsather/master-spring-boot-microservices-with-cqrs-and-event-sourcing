@@ -1,2 +1,8 @@
-package com.springbank.user.core.events;public class UserRemovedEvent {
+package com.springbank.user.core.events;
+
+import lombok.Data;
+
+@Data
+public class UserRemovedEvent {
+    private String id;
 }
