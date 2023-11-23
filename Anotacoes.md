@@ -86,4 +86,18 @@ Principal método do UserAggregate que é um construtor da classe que recebe um 
         AggregateLifecycle.apply(event);
     }
 ```
+O user.api.cmd > aggregates > UserAggregate, possui 3 métodos que manipulam os comandos, para que servem? Esses métodos recebem um comando e validam se esse comando é válido e aplicam a regra de negócio, ou seja, o agregado é um ponto central para validação de comandos para criação de eventos corretos. Também possui 3 métodos on, responsáveis por atualizar o estado do agregado após a criação de um novo evento, permitindo assim a recriação do agregado em caso de falha e mantendo a consistência do agregado, excelente para sistemas distribuídos. Dessa forma o agregado nesas arquitetura CQRS é um serviço que recebe comandos e retorna eventos.
+
+
+## user.query.api
+### handlers > UserEventHandler
+Para manipular/processar comandos na user.cmd.api temos o serviço UserAggregate e para manipular/processar os eventos temos no user.query.api o UserEventHandler. É interessante notar que o UserEventHandler da user.query.api não tem acesso ao banco de eventos (escrita), seu acesso no que se refere a eventos é restrito ao Event Bus (barramento de eventos).
+
+Manipular/Processar 
+- *Comandos* => user.cmd.api.UserAggregate recebe comando e cria evento pro Event Bus (barramento de eventos) e pro Event Storage (banco de escrita).
+- *Eventos* => user.cmd.api.UserEventHandler recebe evento e cria registro no banco de leitura.
+
+### UserEventHandler vs QueryEventHandler
+No UserEventHandler eu pego um evento do Event Bus e persisto no banco de leitura, já o QueryEventHandler eu apenas consulto os dados no banco de leitura, note novamente a separação de responsabilidades de leitura e escrita dentro da user.query.api, apesar das duas usarem o userRepository eu dividi em 2 responsabilidade escrita e leitura e cada uma usa separadamente o userRepository.
+
 

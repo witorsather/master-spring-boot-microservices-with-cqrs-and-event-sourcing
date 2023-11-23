@@ -64,7 +64,8 @@ public class UserAggregate {
 
     @CommandHandler
     public void handle(RemoveUserCommand command) {
-        
+        var event = new UserRemovedEvent();
+        AggregateLifecycle.apply(event);
     }
 
     // anotacao @EventSourcingHandler relacionada a anotacao @TargetAggregateIdentifier do comando
@@ -82,7 +83,6 @@ public class UserAggregate {
 
     @EventSourcingHandler
     public void on(UserRemovedEvent event) {
-
+        AggregateLifecycle.markDeleted();
     }
-    
 }
