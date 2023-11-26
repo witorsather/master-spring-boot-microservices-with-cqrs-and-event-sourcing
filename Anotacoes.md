@@ -101,7 +101,7 @@ Manipular/Processar
 No UserEventHandler eu pego um evento do Event Bus e persisto no banco de leitura, já o QueryEventHandler eu apenas consulto os dados no banco de leitura, note novamente a separação de responsabilidades de leitura e escrita dentro da user.query.api, apesar das duas usarem o userRepository eu dividi em 2 responsabilidade escrita e leitura e cada uma usa separadamente o userRepository.
 
 ### controllers > RegisterUserController
-O controller recebe o comando do cliente da api, com o comando em mãos ele o envia para o Axon Framework usando o commandGateway.send(command), aí o Axon Framework com um comando em mãos se pergunta, tem algum método marcado com a anotação @CommandHandler? A tem, então manda pra ele processar.
+O controller recebe o comando do cliente da api, com o comando em mãos ele o envia para o Axon Framework usando o commandGateway.send(command), aí o Axon Framework com um comando em mãos se pergunta, tem algum método marcado com a anotação @CommandHandler? Ah tem no aggregates > UserAggregate, então manda pra ele processar, o UserAggregate gera um evento no barramento de eventos e salva no banco de eventos, o axon framework sozinho ao receber o novo evento no barramento se pergunta, tem algum evento novo e um método EventHandler pra o processar? Se os dois combinarem aí manda o evento para o método com @EventHandler que está no user.query.api que pega o evento e o salva no banco de leitura.
 
 ```java
     @PostMapping
