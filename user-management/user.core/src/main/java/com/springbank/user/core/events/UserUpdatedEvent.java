@@ -9,6 +9,4 @@ import lombok.Data;
 public class UserUpdatedEvent {
     private String id;
     private User user;
-
-    public UserUpdatedEvent() {}
 }

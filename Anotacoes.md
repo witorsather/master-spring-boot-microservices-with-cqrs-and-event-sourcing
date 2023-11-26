@@ -100,4 +100,44 @@ Manipular/Processar
 ### UserEventHandler vs QueryEventHandler
 No UserEventHandler eu pego um evento do Event Bus e persisto no banco de leitura, já o QueryEventHandler eu apenas consulto os dados no banco de leitura, note novamente a separação de responsabilidades de leitura e escrita dentro da user.query.api, apesar das duas usarem o userRepository eu dividi em 2 responsabilidade escrita e leitura e cada uma usa separadamente o userRepository.
 
+### controllers > RegisterUserController
+O controller recebe o comando do cliente da api, com o comando em mãos ele o envia para o Axon Framework usando o commandGateway.send(command), aí o Axon Framework com um comando em mãos se pergunta, tem algum método marcado com a anotação @CommandHandler? A tem, então manda pra ele processar.
+
+```java
+    @PostMapping
+    public ResponseEntity<RegisterUserResponse> registerUser(RegisterUserCommand command) {
+        try {
+            this.commandGateway.sendAndWait(command);
+            
+        } catch (Exception e) {
+            var safeErrorMessage = "Error while processing register user request for id - " + command.getId();
+            System.out.println(e.toString());
+
+            return new ResponseEntity<>(new RegisterUserResponse(safeErrorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+```
+
+sai da controller pro Axon Framework e depois pro aggregate através do AggregateLifecycle publicar no barramento de eventos e armazenar no banco de dados de eventos.
+
+```java
+@CommandHandler
+    public UserAggregate(RegisterUserCommand command) {
+        var newUser = command.getUser();
+        newUser.setId(command.getId());
+        var password = newUser.getAccount().getPassword();
+        passwordEncoder = new PasswordEncoderImpl();
+        var hashPassword = passwordEncoder.hashPassword(password);
+        newUser.getAccount().setPassword(hashPassword);
+
+        var event = new UserRegisteredEvent().builder()
+                .id(command.getId())
+                .user(newUser)
+                .build();
+
+        AggregateLifecycle.apply(event);
+```
+
+
 

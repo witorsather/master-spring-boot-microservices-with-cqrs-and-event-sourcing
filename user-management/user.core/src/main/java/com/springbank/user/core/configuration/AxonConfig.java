@@ -13,9 +13,7 @@ import org.axonframework.extensions.mongo.eventsourcing.eventstore.MongoFactory;
 import org.axonframework.extensions.mongo.eventsourcing.eventstore.MongoSettingsFactory;
 import org.axonframework.extensions.mongo.eventsourcing.tokenstore.MongoTokenStore;
 import org.axonframework.serialization.Serializer;
-import org.axonframework.serialization.xml.XStreamSerializer;
 import org.axonframework.spring.config.AxonConfiguration;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,14 +29,13 @@ public class AxonConfig {
     private int mongoPort;
 
     @Value("${spring.data.mongodb.database:user}")
-    private String mongoDataBase;
+    private String mongoDatabase;
 
     @Bean
     public MongoClient mongo() {
         var mongoFactory = new MongoFactory();
         var mongoSettingsFactory = new MongoSettingsFactory();
         mongoSettingsFactory.setMongoAddresses(Collections.singletonList(new ServerAddress(mongoHost, mongoPort)));
-
         mongoFactory.setMongoClientSettings(mongoSettingsFactory.createMongoClientSettings());
 
         return mongoFactory.createMongo();
@@ -47,7 +44,7 @@ public class AxonConfig {
     @Bean
     public MongoTemplate axonMongoTemplate() {
         return DefaultMongoTemplate.builder()
-                .mongoDatabase(mongo(), mongoDataBase)
+                .mongoDatabase(mongo(), mongoDatabase)
                 .build();
     }
 
@@ -63,8 +60,8 @@ public class AxonConfig {
     public EventStorageEngine storageEngine(MongoClient client) {
         return MongoEventStorageEngine.builder()
                 .mongoTemplate(DefaultMongoTemplate.builder()
-                        .mongoDatabase(client)
-                        .build())
+                                .mongoDatabase(client)
+                                .build())
                 .build();
     }
 

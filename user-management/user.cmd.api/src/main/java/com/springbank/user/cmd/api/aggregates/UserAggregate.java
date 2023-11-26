@@ -15,6 +15,9 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 @Aggregate
@@ -22,6 +25,7 @@ public class UserAggregate {
     @AggregateIdentifier
     private String id;
     private User user;
+
     private final PasswordEncoder passwordEncoder;
 
     public UserAggregate() {
@@ -34,10 +38,10 @@ public class UserAggregate {
         newUser.setId(command.getId());
         var password = newUser.getAccount().getPassword();
         passwordEncoder = new PasswordEncoderImpl();
-        var hashPassword = passwordEncoder.hashPassword(password);
-        newUser.getAccount().setPassword(hashPassword);
+        var hashedPassword = passwordEncoder.hashPassword(password);
+        newUser.getAccount().setPassword(hashedPassword);
 
-        var event = new UserRegisteredEvent().builder()
+        var event = UserRegisteredEvent.builder()
                 .id(command.getId())
                 .user(newUser)
                 .build();
@@ -50,31 +54,33 @@ public class UserAggregate {
         var updatedUser = command.getUser();
         updatedUser.setId(command.getId());
         var password = updatedUser.getAccount().getPassword();
-        var hashPassword = passwordEncoder.hashPassword(password);
-        updatedUser.getAccount().setPassword(hashPassword);
+        var hashedPassword = passwordEncoder.hashPassword(password);
+        updatedUser.getAccount().setPassword(hashedPassword);
 
-        var event = new UserUpdatedEvent().builder()
+        var event = UserUpdatedEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .user(updatedUser)
                 .build();
 
-        // salva o evento no banco de eventos mongoDb e publica no barramento e eventos
         AggregateLifecycle.apply(event);
     }
 
     @CommandHandler
     public void handle(RemoveUserCommand command) {
         var event = new UserRemovedEvent();
+        event.setId(command.getId());
+
         AggregateLifecycle.apply(event);
     }
 
-    // anotacao @EventSourcingHandler relacionada a anotacao @TargetAggregateIdentifier do comando
     @EventSourcingHandler
     public void on(UserRegisteredEvent event) {
-       this.id = event.getId();
-       this.user = event.getUser();
+        this.id = event.getId();
+        this.user = event.getUser();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date));
     }
-
 
     @EventSourcingHandler
     public void on(UserUpdatedEvent event) {
