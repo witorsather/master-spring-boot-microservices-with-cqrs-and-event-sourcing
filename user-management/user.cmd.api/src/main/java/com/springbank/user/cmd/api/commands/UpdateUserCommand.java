@@ -13,8 +13,7 @@ import javax.validation.constraints.NotNull;
 public class UpdateUserCommand {
     @TargetAggregateIdentifier
     private String id;
-
-    @NotNull(message = "user details were not supply")
+    @NotNull(message = "no user details were supplied")
     @Valid
     private User user;
 }

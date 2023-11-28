@@ -9,10 +9,6 @@ import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 @Service
 @ProcessingGroup("user-group")
 public class UserEventHandlerImpl implements UserEventHandler {
@@ -28,10 +24,6 @@ public class UserEventHandlerImpl implements UserEventHandler {
     @Override
     public void on(UserRegisteredEvent event) {
         userRepository.save(event.getUser());
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date));
     }
 
     @EventHandler

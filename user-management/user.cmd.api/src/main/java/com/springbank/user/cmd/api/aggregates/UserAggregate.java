@@ -15,9 +15,6 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
 @Aggregate
@@ -77,9 +74,6 @@ public class UserAggregate {
     public void on(UserRegisteredEvent event) {
         this.id = event.getId();
         this.user = event.getUser();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date));
     }
 
     @EventSourcingHandler
