@@ -141,3 +141,15 @@ sai da controller pro Axon Framework e depois pro aggregate através do Aggregat
 
 
 
+## Oauth2
+
+https://boaglio.com/index.php/2019/11/16/aprendendo-oauth-2/
+imagem abaixo baseada no link
+
+![OAuth2](imagens/oauth-authorization-code-grant-type.png)
+
+OAuth2 especificação que possui 4 componentes
+- Resource Owner = entidade que concede acesso recurso protegido
+- Resource Server = api que possui o recurso protegido e só libera com token jwt
+- Client = front end aplicação que solicita recursos pro resource server através do acesso que o Resource Owner o concedeu e ele usou pra trocar por token jwt no Auth Server
+- Auth Server = página de login + página de cadastro de usuários, lida fluxo de usuário e senha no final gera token jwt para usuários conforme seus escopos ou permissões, exemplo, apenas escrita, apenas leitura no recurso ou ambos
