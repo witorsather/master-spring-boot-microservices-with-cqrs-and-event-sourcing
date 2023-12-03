@@ -1,4 +1,4 @@
-package com.springbank.user.core.configuration;
+package com.springbank.bankacc.core.configuration;
 
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
@@ -28,7 +28,7 @@ public class AxonConfig {
     @Value("${spring.data.mongodb.port:27017}")
     private int mongoPort;
 
-    @Value("${spring.data.mongodb.database:user}")
+    @Value("${spring.data.mongodb.database:bank}")
     private String mongoDatabase;
 
     @Bean

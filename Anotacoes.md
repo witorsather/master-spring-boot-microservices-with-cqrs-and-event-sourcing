@@ -153,3 +153,14 @@ OAuth2 especificação que possui 4 componentes
 - Resource Server = api que possui o recurso protegido e só libera com token jwt
 - Client = front end aplicação que solicita recursos pro resource server através do acesso que o Resource Owner o concedeu e ele usou pra trocar por token jwt no Auth Server
 - Auth Server = página de login + página de cadastro de usuários, lida fluxo de usuário e senha no final gera token jwt para usuários conforme seus escopos ou permissões, exemplo, apenas escrita, apenas leitura no recurso ou ambos
+
+Spring security é uma biblioteca do spring que com a anotação @AuthenticationServer transforma a aplicação num servidor de autenticação ou de identidade
+a arquitetura de autenticação e autorização no protocolo OAuth2 possui 4 componentes principais: 1 Resource Owner - entidade que concede o acesso ao client, o usuário que acessa a página de login. 2 Resource Server - a api que retorna o recurso JSON após ter validado um token jwt enviado pelo client. 3 Client - Aplicação front end que pega um token jwt com o Servidor de Autenticação, armazena localmente e envia solicitações para o resource server com esse token jwt no Authorization. 4 o Auth Server - o servidor de autenticação que é responsável por criar token jwt para clientes.
+No servidor de autenticação configuramos a classe UserServiceDetails que serve para informar para o servidor de onde ele irá tirar os dados de usuário (username) para comparar com os dados do login e se válidos retorna um token jwt com as devidas autorizações.
+Curiosidade, cliente não autenticado (e por sua vez não autorizado) api retorna 401 não autorizado, client apenas autenticado mas não autorizado a acessar um recurso api retorna 403 proibido.
+
+
+## Spring Cloud Gateway 
+ é uma biblioteca do spring que permite transformar o projeto spring em um gateway reverso, gateway é um ponto de acesso unificado, no nosso roteado temos um gateway que é o ponto entre nosso pc e a internet e ele pode ser usado para filtras sites perigosos, o gateway reverso é um gateway do lado do servidor onde também pode ser usado para filtrar ip suspeitos, terminação ssl e balanceamento de carga, o gateway fica no meio entre o client e o servidor de recursos.
+Pra configurar, muito simples, cria um arquivo de declaração de propriedades yml, com propriedade route e 3 componentes principais, id - identificador, uri - rota que irá mandar a solicitação, e predicate - padrão de rota que chegou.
+

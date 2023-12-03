@@ -9,10 +9,10 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <modules>
+        <module>bankacc.core</module>
+        <module>bankacc.cmd.api</module>
+        <module>bankacc.query.api</module>
+    </modules>
 
 </project>
