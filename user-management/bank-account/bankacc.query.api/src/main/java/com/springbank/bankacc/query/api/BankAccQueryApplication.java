@@ -11,8 +11,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @SpringBootApplication
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Import(AxonConfig.class)
 @EntityScan(basePackages = "com.springbank.bankacc.core.models")
+@Import(AxonConfig.class)
 public class BankAccQueryApplication {
 
 	public static void main(String[] args) {

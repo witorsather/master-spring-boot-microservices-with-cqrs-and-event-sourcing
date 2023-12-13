@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @SpringBootApplication
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @Import(AxonConfig.class)
 public class BankAccCommandApplication {
 

@@ -11,9 +11,9 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
     hibernate:
-      dll-auto: update
+      ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/bank
+    url: jdbc:mysql://localhost:3406/bank
     username: root
     password: springbankRootPsw
 

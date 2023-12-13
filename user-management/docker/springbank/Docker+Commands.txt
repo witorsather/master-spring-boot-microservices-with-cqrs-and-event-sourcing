@@ -1,0 +1,83 @@
+NB: Windows users please remove sudo at the start of each command, and run command prompt or powershell as administrator.
+
+# building a docker image
+sudo docker build -t user-oauth2 .
+
+# list existing docker containers in running state
+sudo docker ps
+
+# obtaining networking details about a container, such as network name
+sudo docker inspect mongo-container -f "{{json .NetworkSettings.Networks }}"
+
+# run an image as a docker container
+docker run -d -p 8084:8084 --name oauth2-service --network springbankNet -e "SPRING_PROFILES_ACTIVE=docker" --restart always user-oauth2
+
+# log into docker hub repo
+sudo docker login
+
+# taging a local docker image to a docker hub repo image
+ docker tag user-oauth2 witorsather/campbelltech:user-oauth2
+ docker tag user-cmd-api witorsather/campbelltech:user-cmd-api
+ docker tag user-query-api witorsather/campbelltech:user-query-api
+ docker tag bankacc-cmd-api witorsather/campbelltech:bankacc-cmd-api
+ docker tag bankacc-query-api witorsather/campbelltech:bankacc-query-api
+ docker tag api-gateway witorsather/campbelltech:api-gateway
+
+
+# push a docker image to a docker hub repository
+ docker push witorsather/campbelltech:user-oauth2
+ docker push witorsather/campbelltech:user-cmd-api
+ docker push witorsather/campbelltech:user-query-api
+ docker push witorsather/campbelltech:bankacc-cmd-api
+ docker push witorsather/campbelltech:bankacc-query-api
+ docker push witorsather/campbelltech:api-gateway
+
+# list all docker containers that are running on a docker host
+sudo docker container ls
+sudo docker container ls --all
+
+# remove a docker container
+sudo docker rm <container ID / container name>
+
+# list all docker images that have been downloaded to a docker host
+sudo docker image ls
+
+# remove a docker image
+sudo docker image rm <image name / image ID>
+
+# pull / download a docker image to a docker host
+sudo docker pull witorsather/campbelltech:user-oauth2
+
+# run a docker image as a container using a docker hub repo image
+sudo docker run -d -p 8084:8084 --name oauth2-service --network springbankNet -e "SPRING_PROFILES_ACTIVE=docker" --restart always
+
+ --link mongo-container campbelltechza/campbelltech:user-oauth2
+
+# building docker images for the rest of the microservices (Excecute command in directory where Dockerfile of each project is located)
+mvn clean install
+
+docker build -t user-oauth2 .
+docker build -t user-cmd-api .
+docker build -t user-query-api .
+docker build -t bankacc-cmd-api .
+docker build -t bankacc-query-api .
+docker build -t api-gateway .
+
+# run one or more docker containers with docker compose (Execute command in directory where docker-compose.yml file is located)
+docker-compose up -d
+
+# stop one or more docker containers with docker compose (Execute command in directory where docker-compose.yml file is located)
+docker-compose down
+
+#Initialize docker swarm
+docker swarm init
+
+# run one or more docker containers with stack deploy (Execute command in directory where docker-compose-stack.yml file is located)
+docker stack deploy --compose-file docker-compose-stack.yml springbank
+
+# list containers that are deployed as services using stack deploy
+sudo docker services ls
+
+# remove all services that are deployed as part of stack (Where springbank is the name of the stack)
+sudo docker stack rm springbank
+

@@ -9,21 +9,16 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Date;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
 public class BankAccount {
-
     @Id
     private String id;
-
-    private String accountHouderId;
-
-    private Date dateCreation;
-
+    private String accountHolderId;
+    private Date creationDate;
     private AccountType accountType;
-
     private double balance;
 }

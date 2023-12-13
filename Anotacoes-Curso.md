@@ -2,29 +2,24 @@
 
 ## CQRS (Command Query Responsibility Segregation)
 
-- Separação de responsabilidades entre leitura (Query) e escrita (Command) em uma aplicação.
+- **Definição:** Separação de responsabilidades entre leitura (Query) e escrita (Command) em uma aplicação.
 - Exemplo: Ter uma camada de comandos para operações de escrita (e.g., salvar) e uma camada de consultas para operações de leitura (e.g., listar).
+
+#### Comandos, Queries e Eventos
+
+- **Command:** Ordem de mudança no sistema, geralmente no formato de um verbo no imperativo (e.g., salvar, criar).
+  
+- **Query:** Solicitação de um estado específico do objeto, operação de leitura.
+
+- **Evento:** Objeto que descreve algo que já aconteceu, geralmente no formato de um verbo no passado (e.g., criado, atualizado).
+
+#### Comandos do **user.cmd.api** e Eventos do **user.core** (Biblioteca de Classes)
+- Todo comando resulta em um evento, os eventos ficam no user.core e são criados através do user.cmd.api pacote commands e pelos 3 comandos, Register, Update e Remove, portanto comandos do user.cmd.api e eventos do user.core estão fortemente relacionados, na verdade eles possuem a mesma aparência, a única diferença é que nos comandos tem a anotação do Axon @TargetAggregateIdentifier. Vale notar que a user.query.api não produz nenhum comando, portanto não produz nenhum evento, ela apenas consome eventos e dados do banco de leitura.
+
 
 ## Event Sourcing
 
-- Utiliza um banco de eventos para armazenar o ciclo de vida de um objeto.
-- Os eventos (create, update, delete) são armazenados e nunca apagados.
-- Útil para ter um histórico completo das mudanças em um objeto.
-
-## Microserviços
-
-- Arquitetura que visa a independência e a falha isolada de serviços.
-- Cada microserviço deve operar de forma independente, sem depender de outros serviços.
-- Um microserviço deve considerar que "tudo falha o tempo todo" e deve falhar de forma independente.
-- A comunicação entre microserviços ocorre através de um barramento de eventos (Event Bus).
-- Os eventos são publicados por um microserviço e consumidos por outros, garantindo que as operações sejam realizadas de forma assíncrona e resiliente.
-- O barramento de eventos permite que os eventos sejam persistidos mesmo se um consumidor falhar, garantindo a consistência quando o consumidor é reiniciado.
-
-## Comandos, Queries e Eventos
-
-- **Command**: Ordem de mudança no sistema, geralmente no formato de um verbo no imperativo (e.g., salvar, criar), pode conter dados sobre como executar a ordem.
-- **Query**: Solicitação de um estado específico do objeto, operação de leitura.
-- **Evento**: Objeto que descreve algo que já aconteceu, geralmente no formato de um verbo no passado (e.g., criado, atualizado).
+- **Definição:** Utiliza um banco de eventos para armazenar o ciclo de vida de um objeto. Os eventos (create, update, delete) são armazenados e nunca apagados, proporcionando um histórico completo das mudanças em um objeto.
 
 ## CQRS sem Event Sourcing
 
@@ -33,22 +28,64 @@
 ## Event Sourcing sem CQRS
 
 - Utilização de Event Sourcing sem separação de responsabilidades entre leitura e escrita.
+- 
+## Microserviços
 
-## API (Interface de Programação de Aplicação)
-- Uma API é uma coleção de endpoints (pontos de extremidade) que permite a comunicação na web entre diferentes sistemas. Cada endpoint representa uma operação específica, que geralmente é realizada utilizando o protocolo HTTP.
+- **Definição:** Arquitetura que visa a independência e falha isolada de serviços. Cada microserviço opera de forma independente, sem depender de outros serviços. A comunicação ocorre através de um barramento de eventos (Event Bus), permitindo operações assíncronas e resilientes.
+- Um microserviço deve considerar que "tudo falha o tempo todo" e deve falhar de forma independente.
+- A comunicação entre microserviços ocorre através de um barramento de eventos (Event Bus).
+- Os eventos são publicados por um microserviço e consumidos por outros, garantindo que as operações sejam realizadas de forma assíncrona e resiliente.
+- O barramento de eventos permite que os eventos sejam persistidos mesmo se um consumidor falhar, garantindo a consistência quando o consumidor é reiniciado.
 
--- **user.cmd.api**: API que não usa 
 
--- **user.query.api**: API que usa MongoDB
+## Spring Cloud Gateway
 
--- **user.core**: O projeto user.core não é uma API, pois não expõe endpoints restful, ele é uma biblioteca de classe interna, para apenas sistemas locais na rede springbankNet usar, por isso ele não possui a dependência Spring Web feita para usar controllers restful para expor endpoints.
+- **Definição:** Biblioteca do Spring que permite transformar o projeto Spring em um gateway reverso, facilitando o roteamento e filtragem de solicitações.
 
-## Biblioteca de Classes user.core
+- **Configuração:** Destaca a simplicidade de configuração usando um arquivo de declaração de propriedades YAML para roteamento.
+
+Se houver alguma parte específica que você gostaria de discutir ou se tiver mais perguntas, sinta-se à vontade para perguntar!
+
+É uma biblioteca do spring que permite transformar o projeto spring em um gateway reverso, gateway é um ponto de acesso unificado, no nosso roteado temos um gateway que é o ponto entre nosso pc e a internet e ele pode ser usado para filtras sites perigosos, o gateway reverso é um gateway do lado do servidor onde também pode ser usado para filtrar ip suspeitos, terminação ssl e balanceamento de carga, o gateway fica no meio entre o client e o servidor de recursos.
+Pra configurar, muito simples, cria um arquivo de declaração de propriedades yml, com propriedade route e 3 componentes principais, id - identificador, uri - rota que irá mandar a solicitação, e predicate - padrão de rota que chegou.
+
+## Revisão sobre CQRS e Event Sourcing
+
+- **Integração com Spring Boot:** Excelente explicação sobre como o Axon Framework facilita a implementação de CQRS e Event Sourcing no contexto do Spring Boot.
+
+## User Core Library
+
+- **Objetivo:** Permite o compartilhamento de modelos (como o modelo de usuário) entre as APIs user.cmd.api e user.query.api.
+
 Quando o Axon Framework precisa interagir com o MongoDB (por exemplo, para armazenar eventos em um Event Store), ele usa a instância do MongoClient fornecida por esse bean. Essa configuração permite uma integração suave entre o Axon Framework e o MongoDB no contexto de um sistema que utiliza CQRS e Event Sourcing.
 
 Ao Utilizar uma biblioteca de classe user.core na user.cmd.api eu posso reaproveitar o models > User da biblioteca em vez de ter que criar meus próprios modelos, uma vez que os modelos são os mesmos para a user.cmd.api e a user.query.api
 
 ![](imagens/user-cmd-user-core.png)
+
+## OAuth2
+
+- **Definição:** Protocolo de autorização que permite a um aplicativo obter acesso limitado a uma conta em um serviço HTTP. Envolve Resource Owner, Resource Server, Client e Authorization Server.
+
+- **Fluxo de Autorização de Código:** A explicação sobre o fluxo de autorização de código no OAuth2 é clara, indicando a interação entre Resource Owner, Client, Authorization Server e Resource Server.
+
+
+https://boaglio.com/index.php/2019/11/16/aprendendo-oauth-2/
+imagem abaixo baseada no link
+
+![OAuth2](imagens/oauth-authorization-code-grant-type.png)
+
+OAuth2 especificação que possui 4 componentes
+- Resource Owner = entidade que concede acesso recurso protegido
+- Resource Server = api que possui o recurso protegido e só libera com token jwt
+- Client = front end aplicação que solicita recursos pro resource server através do acesso que o Resource Owner o concedeu e ele usou pra trocar por token jwt no Auth Server
+- Auth Server = página de login + página de cadastro de usuários, lida fluxo de usuário e senha no final gera token jwt para usuários conforme seus escopos ou permissões, exemplo, apenas escrita, apenas leitura no recurso ou ambos
+
+**Spring security** é uma biblioteca do spring que com a anotação @AuthenticationServer transforma a aplicação num servidor de autenticação ou de identidade
+a arquitetura de autenticação e autorização no protocolo OAuth2 possui 4 componentes principais: 1 Resource Owner - entidade que concede o acesso ao client, o usuário que acessa a página de login. 2 Resource Server - a api que retorna o recurso JSON após ter validado um token jwt enviado pelo client. 3 Client - Aplicação front end que pega um token jwt com o Servidor de Autenticação, armazena localmente e envia solicitações para o resource server com esse token jwt no Authorization. 4 o Auth Server - o servidor de autenticação que é responsável por criar token jwt para clientes.
+No servidor de autenticação configuramos a classe UserServiceDetails que serve para informar para o servidor de onde ele irá tirar os dados de usuário (username) para comparar com os dados do login e se válidos retorna um token jwt com as devidas autorizações.
+Curiosidade, cliente não autenticado (e por sua vez não autorizado) api retorna 401 não autorizado, client apenas autenticado mas não autorizado a acessar um recurso api retorna 403 proibido.
+
 
 ## Domínio de Usuário 
 Para a gestão do domínio de usuário, adotamos a abordagem CQRS, que se traduz na divisão do domínio em duas APIs distintas: **user.cmd.api** e **user.query.api**. Ao contrário do modelo tradicional, onde uma única interface lida tanto com operações de leitura quanto de escrita, optamos por caminhos separados para otimizar cada responsabilidade.
@@ -57,11 +94,18 @@ Essa separação possibilita a otimização de cada caminho de acordo com suas f
 
 Interessante notar que para a visão de aplicação do usuário, existe apenas um ponto focal dos recursos, a interface visual que ele está usando, mas na visão API interface de computador, quando o usuário solicita leitura usa user.query.api e quando ele solicita registrar algo, usa user.cmd.api controller updtate.
 
-## Comandos do **user.cmd.api** e Eventos do **user.core** (Biblioteca de Classes)
-- Todo comando resulta em um evento, os eventos ficam no user.core e são criados através do user.cmd.api pacote commands e pelos 3 comandos, Register, Update e Remove, portanto comandos do user.cmd.api e eventos do user.core estão fortemente relacionados, na verdade eles possuem a mesma aparência, a única diferença é que nos comandos tem a anotação do Axon @TargetAggregateIdentifier. Vale notar que a user.query.api não produz nenhum comando, portanto não produz nenhum evento, ela apenas consome eventos e dados do banco de leitura.
 
-## user.cmd.api
-### UserAggregate
+## APIs (Interface de Programação de Aplicação)
+- Uma API é uma coleção de endpoints (pontos de extremidade) que permite a comunicação na web entre diferentes sistemas. Cada endpoint representa uma operação específica, que geralmente é realizada utilizando o protocolo HTTP.
+
+-- **user.cmd.api**: API que não usa 
+
+-- **user.query.api**: API que usa MongoDB
+
+-- **user.core**: O projeto user.core não é uma API, pois não expõe endpoints restful, ele é uma biblioteca de classe interna, para apenas sistemas locais na rede springbankNet usar, por isso ele não possui a dependência Spring Web feita para usar controllers restful para expor endpoints.
+
+#### API user.query.api
+##### UserAggregate
 Interessante notar que nessa classe temos 2 tipos de manipuladores, manipuladores de comandos e manipuladores de eventos, ou seja, o agregado é responsável por receber comandos transforma-los em eventos e logo em seguida outra método seu manipular esse evento transformado pelo manipulador de comando pra evento.
 
 Reponsável por receber um comando dos tipos Register, Updtate e Remove user e retornar um evento. Todos os manipuladores de fornercimento de eventos combinados formam o agregado.
@@ -87,7 +131,6 @@ Principal método do UserAggregate que é um construtor da classe que recebe um 
     }
 ```
 O user.api.cmd > aggregates > UserAggregate, possui 3 métodos que manipulam os comandos, para que servem? Esses métodos recebem um comando e validam se esse comando é válido e aplicam a regra de negócio, ou seja, o agregado é um ponto central para validação de comandos para criação de eventos corretos. Também possui 3 métodos on, responsáveis por atualizar o estado do agregado após a criação de um novo evento, permitindo assim a recriação do agregado em caso de falha e mantendo a consistência do agregado, excelente para sistemas distribuídos. Dessa forma o agregado nesas arquitetura CQRS é um serviço que recebe comandos e retorna eventos.
-
 
 ## user.query.api
 ### handlers > UserEventHandler
@@ -141,26 +184,4 @@ sai da controller pro Axon Framework e depois pro aggregate através do Aggregat
 
 
 
-## Oauth2
-
-https://boaglio.com/index.php/2019/11/16/aprendendo-oauth-2/
-imagem abaixo baseada no link
-
-![OAuth2](imagens/oauth-authorization-code-grant-type.png)
-
-OAuth2 especificação que possui 4 componentes
-- Resource Owner = entidade que concede acesso recurso protegido
-- Resource Server = api que possui o recurso protegido e só libera com token jwt
-- Client = front end aplicação que solicita recursos pro resource server através do acesso que o Resource Owner o concedeu e ele usou pra trocar por token jwt no Auth Server
-- Auth Server = página de login + página de cadastro de usuários, lida fluxo de usuário e senha no final gera token jwt para usuários conforme seus escopos ou permissões, exemplo, apenas escrita, apenas leitura no recurso ou ambos
-
-Spring security é uma biblioteca do spring que com a anotação @AuthenticationServer transforma a aplicação num servidor de autenticação ou de identidade
-a arquitetura de autenticação e autorização no protocolo OAuth2 possui 4 componentes principais: 1 Resource Owner - entidade que concede o acesso ao client, o usuário que acessa a página de login. 2 Resource Server - a api que retorna o recurso JSON após ter validado um token jwt enviado pelo client. 3 Client - Aplicação front end que pega um token jwt com o Servidor de Autenticação, armazena localmente e envia solicitações para o resource server com esse token jwt no Authorization. 4 o Auth Server - o servidor de autenticação que é responsável por criar token jwt para clientes.
-No servidor de autenticação configuramos a classe UserServiceDetails que serve para informar para o servidor de onde ele irá tirar os dados de usuário (username) para comparar com os dados do login e se válidos retorna um token jwt com as devidas autorizações.
-Curiosidade, cliente não autenticado (e por sua vez não autorizado) api retorna 401 não autorizado, client apenas autenticado mas não autorizado a acessar um recurso api retorna 403 proibido.
-
-
-## Spring Cloud Gateway 
- é uma biblioteca do spring que permite transformar o projeto spring em um gateway reverso, gateway é um ponto de acesso unificado, no nosso roteado temos um gateway que é o ponto entre nosso pc e a internet e ele pode ser usado para filtras sites perigosos, o gateway reverso é um gateway do lado do servidor onde também pode ser usado para filtrar ip suspeitos, terminação ssl e balanceamento de carga, o gateway fica no meio entre o client e o servidor de recursos.
-Pra configurar, muito simples, cria um arquivo de declaração de propriedades yml, com propriedade route e 3 componentes principais, id - identificador, uri - rota que irá mandar a solicitação, e predicate - padrão de rota que chegou.
 
